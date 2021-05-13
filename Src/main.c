@@ -25,48 +25,39 @@
 /* SPI handle for our SPI device */
 spi_handle_t SpiHandle;
 
-int TestReady = 0;
+i2c_handle_t i2c_handle;
 
+int TestReady = 0;
+#ifdef SPI_TEST
 uint8_t master_write_data[4]={ 0xa, 0xb, 0xc, 0xd};
 
 uint8_t slave_tx_buffer[4]={ 0x55, 0xaa, 0x55, 0xaa};
 uint8_t slave_rx_buffer[4];
-
+#endif
 
 int main(void)
 
 
 {
+#ifdef SPI_TEST
 	uint16_t ack_bytes = SPI_ACK_BYTES;
 	uint8_t rcv_cmd[2];
 	uint8_t ack_buf[2] = { 0XD5, 0XE5 };
 	uint16_t master_cmd;
+#endif
 
 	spi_gpio_init();
-
-
 	led_init();  										// configure LED
+	i2c_gpio_init();
+	button_init();  /* Configure USER Button as ext interrupt throw EXTI0 */
 
-
-	/* Configure USER Button as ext interrupt throw EXTI0 */
-
-	_HAL_RCC_GPIOA_CLK_ENABLE();
-	gpio_pin_conf_t gpio_pin_conf;
-	gpio_pin_conf.pin = GPIO_BUTTON_PIN;
-	gpio_pin_conf.mode = GPIO_PIN_INPUT_MODE;
-	gpio_pin_conf.op_type = GPIO_PIN_OP_TYPE_PUSHPULL;
-	gpio_pin_conf.pull = GPIO_PIN_NO_PULL_PUSH;
-	gpio_pin_conf.speed = GPIO_PIN_SPEED_MEDIUM;
-	hal_gpio_init(GPIO_BUTTON_PORT,&gpio_pin_conf);
-
-
-	//RCC->APB2ENR |= (1 << 14);
-	//SYSCFG->EXTICR[0] &= (0b1111 << 12);
-	hal_gpio_configure_interrupt(GPIO_BUTTON_PIN, INT_FALLING_EDGE);
-	hal_gpio_enable_interrupt(GPIO_BUTTON_PIN, EXTI0_IRQn);
+	/**
+	 ******************************************************************************
+	 	 	 	 	 	 	 	 	 	 SPI CONFIG
+	 ******************************************************************************
+	 */
 
 	_HAL_RCC_SPI2_CLK_ENABLE();
-
 
 	/*fill up the SPI handle structure */
 	SpiHandle.Instance				= SPI_2;
@@ -87,6 +78,32 @@ int main(void)
 
 	/* Enable the IRQs in the NVIC */
 	NVIC_EnableIRQ(SPI2_IRQn);
+	/**
+	 ******************************************************************************
+	 	 	 	 	 	 	 	 	 	I2C CONFIG
+	 ******************************************************************************
+	 */
+	_HAL_RCC_I2C1_CLK_ENABLE();
+	i2c_handle.Instance = I2C_1;        // base address in memory
+	i2c_handle.Init.ack_enable = I2C_ACK_ENABLE;
+	i2c_handle.Init.AddressingMode = I2C_ADDRMODE_7BIT;
+	i2c_handle.Init.ClockSpeed = 100000;
+	i2c_handle.Init.DutyCycle = I2C_FM_DUTY_2; //care needs to taken
+	i2c_handle.Init.GeneralCallMode = 0;
+	i2c_handle.Init.NoStretchMode = I2C_ENABLE_CLK_STRETCH;
+	i2c_handle.Init.OwnAddress1 = SLAVE_OWN_ADDRESS	;
+
+	NVIC_EnableIRQ(I2Cx_ER_IRQn);
+	NVIC_EnableIRQ(I2Cx_EV_IRQn);
+
+	hal_i2c_init(&i2c_handle);
+	hal_i2c_enable_peripheral(i2c_handle.Instance); // It need for something. I think 2IC enable occur in TX/RX function
+
+	//hal_gpio_enable_interrupt(0);
+
+	//val = i2c_handle.Instance->CR1;
+	i2c_handle.State = HAL_I2C_STATE_READY;
+	/******************************************************************************/
 
 	/* Wait for user Button press before starting the communication. Toggles LED_ORANGE until then */
 	/*while (TestReady != SET) {
@@ -94,9 +111,110 @@ int main(void)
 		//LED3 (orange)
 		delay_gen();
 	}*/
-	hal_gpio_write_to_pin(GPIOI, LED_RED, 0);
+	hal_gpio_write_to_pin(GPIOD, LED_RED, 0);
 
 	while (1) {
+#ifdef I2C_TEST
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			;
+#ifdef I2C_MASTER_MODE_EN // code for MASTER implementation
+
+		/*						Write to the slave						*/
+
+		/* first send the master write cmd to slave */
+		master_write_req = MASTER_WRITE_CMD;
+		hal_i2c_master_tx(&i2c_handle, SLAVE_ADDRESS_WRITE,
+				(uint8_t*) &master_write_req, 1);
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		master_write_req = WRITE_LEN;
+		/* Now send the number of bytes to be written */
+		hal_i2c_master_tx(&i2c_handle, SLAVE_ADDRESS_WRITE,
+				(uint8_t*) &master_write_req, 1);
+
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		/* NOW send the data stream */
+		hal_i2c_master_tx(&i2c_handle, SLAVE_ADDRESS_WRITE, master_tx_buffer,
+				WRITE_LEN);
+
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		/*						Read from the slave						*/
+
+
+		/* first send the master read cmd to slave */
+		master_read_req = MASTER_READ_CMD;
+		hal_i2c_master_tx(&i2c_handle, SLAVE_ADDRESS_WRITE,
+				(uint8_t*) &master_read_req, 1);
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		master_read_req = READ_LEN;
+		/* Now send the number of bytes to be read */
+		hal_i2c_master_tx(&i2c_handle, SLAVE_ADDRESS_WRITE,
+				(uint8_t*) &master_read_req, 1);
+
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		memset(master_rx_buffer, 0, 5); // reset RX buffer
+		/* NOW read the data stream */
+		hal_i2c_master_rx(&i2c_handle, SLAVE_ADDRESS_READ, master_rx_buffer,
+				READ_LEN);
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			; // application can block here, or you can put here some useful task
+
+		if (Buffercmp(slave_tx_buffer, master_rx_buffer, READ_LEN)) {
+			hal_gpio_write_to_pin(GPIOD, LED_RED, 1);
+		} else
+			led_toggle(GPIOD, LED_BLUE);
+
+
+		delay_gen();
+
+#else   // code for SLAVE implementation
+		/* first rcv the command from the master */
+		hal_i2c_slave_rx(&i2c_handle, &slave_rcv_cmd, 1);
+		while (i2c_handle.State != HAL_I2C_STATE_READY)
+			;
+
+		if (slave_rcv_cmd == MASTER_WRITE_CMD) {
+			//prepare to rcv from the master
+			//first rcv no bytes to be written by master
+			hal_i2c_slave_rx(&i2c_handle, &slave_rcv_cmd, 1);
+			while (i2c_handle.State != HAL_I2C_STATE_READY)
+				;
+			memset(slave_rx_buffer, 0, sizeof(slave_rx_buffer));
+			hal_i2c_slave_rx(&i2c_handle, slave_rx_buffer, slave_rcv_cmd);
+			while (i2c_handle.State != HAL_I2C_STATE_READY)
+				;
+
+			if (Buffercmp(slave_rx_buffer, master_tx_buffer, READ_LEN)) {
+				hal_gpio_write_to_pin(GPIOD, LED_RED, 1);
+			} else
+				led_toggle(GPIOD, LED_BLUE);
+		}
+
+		if (slave_rcv_cmd == MASTER_READ_CMD) {
+			//prepare to send data to the  master
+			//first rcv no bytes to be written to master
+			hal_i2c_slave_rx(&i2c_handle, &slave_rcv_cmd, 1);
+			while (i2c_handle.State != HAL_I2C_STATE_READY)
+				;
+
+			hal_i2c_slave_tx(&i2c_handle, slave_tx_buffer, slave_rcv_cmd);
+			while (i2c_handle.State != HAL_I2C_STATE_READY)
+				;
+
+		}
+
+#endif  //	end master/slave choice
+#endif  //	end I2C test scenario
+#ifdef SPI_TEST
 		/*Make sure that driver state is ready */
 		while (SpiHandle.State != HAL_SPI_STATE_READY)
 			;
@@ -151,7 +269,7 @@ int main(void)
 			while (SpiHandle.State != HAL_SPI_STATE_READY)
 				;
 		}
-
+#endif // SPI_TEST condition
 	}
 	return 0;
 }
@@ -191,6 +309,26 @@ void led_toggle(GPIO_TypeDef *GPIOx, uint16_t pin) {
 		hal_gpio_write_to_pin(GPIOx, pin, 1);
 }
 
+void i2c_gpio_init(void) {
+	gpio_pin_conf_t i2c_pin;
+
+	_HAL_RCC_GPIOB_CLK_ENABLE();
+
+	i2c_pin.pin = I2C1_SCL_LINE;
+	i2c_pin.mode = GPIO_PIN_ALT_FUN_MODE;
+	i2c_pin.op_type = GPIO_PIN_OP_TYPE_OPENDRAIN;
+	i2c_pin.pull = GPIO_PIN_PULL_UP;
+	i2c_pin.speed = GPIO_PIN_SPEED_HIGH;
+
+	hal_gpio_set_alt_function(GPIOB, I2C1_SCL_LINE, GPIO_PIN_AF4_I2C123);
+	hal_gpio_init(GPIOB, &i2c_pin);
+
+	i2c_pin.pin = I2C1_SDA_LINE;	// need change only pin number another have got same configuration
+
+	hal_gpio_set_alt_function(GPIOB, I2C1_SDA_LINE, GPIO_PIN_AF4_I2C123);
+	hal_gpio_init(GPIOB, &i2c_pin);
+}
+
 void spi_gpio_init(void){
 	gpio_pin_conf_t gpio_pin_conf;
 
@@ -226,6 +364,22 @@ void assert_error(void) {
 		led_toggle(GPIOD, LED_RED);
 		delay_gen();
 	}
+}
+
+void button_init(void) {
+	_HAL_RCC_GPIOA_CLK_ENABLE();
+	gpio_pin_conf_t gpio_pin_conf;
+	gpio_pin_conf.pin = GPIO_BUTTON_PIN;
+	gpio_pin_conf.mode = GPIO_PIN_INPUT_MODE;
+	gpio_pin_conf.op_type = GPIO_PIN_OP_TYPE_PUSHPULL;
+	gpio_pin_conf.pull = GPIO_PIN_NO_PULL_PUSH;
+	gpio_pin_conf.speed = GPIO_PIN_SPEED_MEDIUM;
+	hal_gpio_init(GPIO_BUTTON_PORT, &gpio_pin_conf);
+
+	//RCC->APB2ENR |= (1 << 14);
+	//SYSCFG->EXTICR[0] &= (0b1111 << 12);
+	hal_gpio_configure_interrupt(GPIO_BUTTON_PIN, INT_FALLING_EDGE);
+	hal_gpio_enable_interrupt(GPIO_BUTTON_PIN, EXTI0_IRQn);
 }
 
 static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
