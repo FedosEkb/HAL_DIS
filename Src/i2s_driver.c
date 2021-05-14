@@ -38,7 +38,7 @@ static void hal_i2c_manage_clock_stretch(I2C_TypeDef *i2cx, uint32_t no_stretch)
 static void hal_i2c_configure_ccr(I2C_TypeDef *i2cx, uint32_t pclk, uint32_t clkspeed,
 		uint32_t duty_cycle) {
 
-	double Thigh, Tlow, Tpclk;
+	//double Thigh, Tlow, Tpclk;
 	uint32_t ccr;
 	if (clkspeed <= 100000) {
 		/* configure ccr for standard mode */

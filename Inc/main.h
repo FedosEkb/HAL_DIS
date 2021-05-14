@@ -62,11 +62,11 @@ uint8_t slave_rcv_cmd;
 #define EXTIx_IRQHandler           		EXTI0_IRQHandler
 
 /* Definition for I2Cx's NVIC */
-#define I2Cx_EV_IRQn                    I2C2_EV_IRQn
+#define I2Cx_EV_IRQn                    I2C1_EV_IRQn
 #define I2Cx_EV_IRQHandler              I2C1_EV_IRQHandler
 
-#define I2Cx_ER_IRQn                    I2C2_ER_IRQn
-#define I2Cx_ER_IRQHandler              I2C2_ER_IRQHandler
+#define I2Cx_ER_IRQn                    I2C1_ER_IRQn
+#define I2Cx_ER_IRQHandler              I2C1_ER_IRQHandler
 
 /* Button details */
 #define GPIO_BUTTON_PIN   0										// if it for interrupt define need EXTI15 from GPIOG!!!

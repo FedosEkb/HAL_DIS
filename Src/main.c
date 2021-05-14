@@ -17,7 +17,6 @@
  ******************************************************************************
  */
 
-
 #include "main.h"
 
 /* data declaration */
@@ -28,23 +27,21 @@ spi_handle_t SpiHandle;
 i2c_handle_t i2c_handle;
 
 int TestReady = 0;
+
 #ifdef SPI_TEST
 uint8_t master_write_data[4]={ 0xa, 0xb, 0xc, 0xd};
 
 uint8_t slave_tx_buffer[4]={ 0x55, 0xaa, 0x55, 0xaa};
 uint8_t slave_rx_buffer[4];
-#endif
+#endif  // to prevent warning
 
-int main(void)
-
-
-{
+int main(void) {
 #ifdef SPI_TEST
 	uint16_t ack_bytes = SPI_ACK_BYTES;
 	uint8_t rcv_cmd[2];
 	uint8_t ack_buf[2] = { 0XD5, 0XE5 };
 	uint16_t master_cmd;
-#endif
+#endif	// to prevent warning
 
 	spi_gpio_init();
 	led_init();  										// configure LED
@@ -405,6 +402,27 @@ void EXTI0_IRQHandler(void){
 	hal_gpio_clear_interrupt(GPIO_BUTTON_PIN);
 	TestReady = SET;
 }
+
+
+/*
+ * @brief  This function handles I2C event interrupt request.
+ * @param  none
+ * @retval none
+ */
+void I2C1_EV_IRQHandler(void){
+	HAL_I2C_EV_IRQHandler(& i2c_handle);
+}
+
+
+/*
+ * @brief  This function handles I2C error interrupt request.
+ * @param  none
+ * @retval none
+ */
+void I2C1_ER_IRQHandler(void){
+	HAL_I2C_ER_IRQHandler(& i2c_handle);
+}
+
 
 /*
  * @brief  This function handles SPI2 interrupt request.
