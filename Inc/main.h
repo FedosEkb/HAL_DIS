@@ -70,6 +70,14 @@ uint8_t slave_rcv_cmd;
 #define I2Cx_ER_IRQn                    I2C1_ER_IRQn
 #define I2Cx_ER_IRQHandler              I2C1_ER_IRQHandler
 
+/* Definition for USARTx's NVIC */
+#define USARTx_IRQn                      USART2_IRQn
+#define USARTx_IRQHandler                USART2_IRQHandler
+
+#define EXTIx_IRQn                 EXTI0_IRQn
+#define EXTIx_IRQHandler           EXTI0_IRQHandler
+
+
 /* Button details */
 #define GPIO_BUTTON_PIN   0										// if it for interrupt define need EXTI15 from GPIOG!!!
 #define GPIO_BUTTON_PORT  GPIOA
@@ -104,10 +112,18 @@ uint8_t slave_rcv_cmd;
 #define I2C1_SCL_LINE	GPIOx_PIN_6
 #define I2C1_SDA_LINE	GPIOx_PIN_9
 
-/* SPI alternate functionality value */
-#define GPIO_PIN_AF5_SPI2   0x05
+#define USARTx_TX_PIN 	GPIOx_PIN_2
+#define USARTx_RX_PIN 	GPIOx_PIN_3
+
+
+/* alternate functionality value */
+#define GPIO_PIN_AF5_SPI2   			0x05
 #define ALT_FUN_4                       0x04
 #define GPIO_PIN_AF4_I2C123             ALT_FUN_4
+#define GPIO_AF7_USART2        			((uint8_t)0x07)  /* USART2 Alternate Function mapping     */
+#define USARTx_TX_AF                     GPIO_AF7_USART2
+#define USARTx_RX_AF                     GPIO_AF7_USART2
+
 
 /********************************************************************************/
 /*                                                                            	*/
@@ -125,6 +141,15 @@ void led_toggle(GPIO_TypeDef *GPIOx, uint16_t pin);
 void delay_gen(void);
 void assert_error(void);
 static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
+
+/*					UART					*/
+void uart_gpio_init(void);
+void error_handler(void);
+void handle_cmd(int cmd, int led);
+void parse_cmd(uint8_t *cmd);
+void app_tx_cmp_callback(void *size);
+void app_rx_cmp_callback(void *size);
+
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
