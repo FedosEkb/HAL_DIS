@@ -17,7 +17,8 @@
 #include "stm32f4xx.h"
 #include "string.h"
 
-#define I2C_TEST
+#define UART_TEST
+//#define I2C_TEST
 //#define I2C_MASTER_MODE_EN    // if this line is commented application will work in slave mode
 //#define SPI_TEST
 

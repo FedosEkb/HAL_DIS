@@ -43,6 +43,7 @@ int main(void) {
 	uint16_t master_cmd;
 #endif	// to prevent warning
 
+
 	spi_gpio_init();
 	led_init();  										// configure LED
 	i2c_gpio_init();
@@ -111,6 +112,11 @@ int main(void) {
 	hal_gpio_write_to_pin(GPIOD, LED_RED, 0);
 
 	while (1) {
+#ifdef UART_TEST
+
+
+#endif
+
 #ifdef I2C_TEST
 		while (i2c_handle.State != HAL_I2C_STATE_READY)
 			;
