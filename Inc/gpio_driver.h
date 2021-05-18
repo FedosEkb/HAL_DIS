@@ -46,6 +46,13 @@
 #define GPIO_PORT_H 						GPIOH
 #define GPIO_PORT_I 						GPIOI
 
+
+#define LED_GREEN				12  // All LED in my China board is green +)
+#define LED_ORANGE				13
+#define LED_RED					14
+#define LED_BLUE				15
+
+
 /* Macros to enable clocking for gpio port */
 
 #define _HAL_RCC_GPIOA_CLK_ENABLE()			(RCC->AHB1ENR |= (1 << 0))

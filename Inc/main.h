@@ -9,6 +9,7 @@
 #define MAIN_H_
 
 #include "gpio_driver.h"
+#include "uart_driver.h"
 #include "SPI_driver.h"
 #include "i2c_driver.h"
 #include "i2c_int_handler.h"
@@ -127,12 +128,6 @@ static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferL
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
-
-
-#define LED_GREEN				12  // All LED in my China board is green +)
-#define LED_ORANGE				13
-#define LED_RED					14
-#define LED_BLUE				15
 
 
 #endif /* MAIN_H_ */

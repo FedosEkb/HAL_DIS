@@ -12,7 +12,8 @@ C_SRCS += \
 ../Src/main.c \
 ../Src/syscalls.c \
 ../Src/sysmem.c \
-../Src/system_stm32f4xx.c 
+../Src/system_stm32f4xx.c \
+../Src/uart_driver.c 
 
 OBJS += \
 ./Src/SPI_driver.o \
@@ -22,7 +23,8 @@ OBJS += \
 ./Src/main.o \
 ./Src/syscalls.o \
 ./Src/sysmem.o \
-./Src/system_stm32f4xx.o 
+./Src/system_stm32f4xx.o \
+./Src/uart_driver.o 
 
 C_DEPS += \
 ./Src/SPI_driver.d \
@@ -32,7 +34,8 @@ C_DEPS += \
 ./Src/main.d \
 ./Src/syscalls.d \
 ./Src/sysmem.d \
-./Src/system_stm32f4xx.d 
+./Src/system_stm32f4xx.d \
+./Src/uart_driver.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -52,4 +55,6 @@ Src/sysmem.o: ../Src/sysmem.c Src/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Inc" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Include" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/sysmem.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Src/system_stm32f4xx.o: ../Src/system_stm32f4xx.c Src/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Inc" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Include" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/system_stm32f4xx.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
+Src/uart_driver.o: ../Src/uart_driver.c Src/subdir.mk
+	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32F407xx -DSTM32 -DSTM32F4 -DSTM32F407VGTx -c -I../Inc -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Inc" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Include" -I"C:/Users/User/STM32CubeIDE/workspace_1.6.1/HAL_DIS/Drivers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/uart_driver.d" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
