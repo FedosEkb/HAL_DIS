@@ -27,7 +27,7 @@
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_MasterTransmit_TXE(i2c_handle_t *hi2c);
+//static void I2C_MasterTransmit_TXE(i2c_handle_t *hi2c);
 
 
 /**
@@ -98,7 +98,7 @@ void HAL_I2C_MasterTxCpltCallback(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval nope
   */
-static void I2C_MasterTransmit_BTF(i2c_handle_t *hi2c);
+ //static void I2C_MasterTransmit_BTF(i2c_handle_t *hi2c);
 
 
 /**
@@ -107,7 +107,7 @@ static void I2C_MasterTransmit_BTF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_MasterReceive_BTF(i2c_handle_t *hi2c);
+ //static void I2C_MasterReceive_BTF(i2c_handle_t *hi2c);
 
 
 /**
@@ -116,7 +116,7 @@ static void I2C_MasterReceive_BTF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_Slave_ADDR(i2c_handle_t *hi2c);
+ //static void I2C_Slave_ADDR(i2c_handle_t *hi2c);
 
 void hal_clear_stop_flag(i2c_handle_t *hi2c);
 
@@ -127,7 +127,7 @@ void hal_clear_stop_flag(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_Slave_STOPF(i2c_handle_t *hi2c);
+//static void I2C_Slave_STOPF(i2c_handle_t *hi2c);
 
 
 /**
@@ -135,7 +135,7 @@ static void I2C_Slave_STOPF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_Slave_AF(i2c_handle_t *hi2c);
+//static void I2C_Slave_AF(i2c_handle_t *hi2c);
 
 
 /**
@@ -144,7 +144,7 @@ static void I2C_Slave_AF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_SlaveTransmit_TXE(i2c_handle_t *hi2c);
+//static void I2C_SlaveTransmit_TXE(i2c_handle_t *hi2c);
 
 
 /**
@@ -153,7 +153,7 @@ static void I2C_SlaveTransmit_TXE(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_SlaveTransmit_BTF(i2c_handle_t *hi2c);
+//static void I2C_SlaveTransmit_BTF(i2c_handle_t *hi2c);
 
 
 /**
@@ -162,7 +162,7 @@ static void I2C_SlaveTransmit_BTF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_MasterReceive_RXNE(i2c_handle_t *hi2c);
+//static void I2C_MasterReceive_RXNE(i2c_handle_t *hi2c);
 
 
 /**
@@ -171,7 +171,7 @@ static void I2C_MasterReceive_RXNE(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_SlaveReceive_BTF(i2c_handle_t *hi2c);
+//static void I2C_SlaveReceive_BTF(i2c_handle_t *hi2c);
 
 
 /**
@@ -180,7 +180,7 @@ static void I2C_SlaveReceive_BTF(i2c_handle_t *hi2c);
   *         the configuration information for I2C module
   * @retval HAL status
   */
-static void I2C_SlaveReceive_RXNE(i2c_handle_t *hi2c);
+//static void I2C_SlaveReceive_RXNE(i2c_handle_t *hi2c);
 
 
 /**

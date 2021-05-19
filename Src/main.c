@@ -37,7 +37,6 @@ uint8_t slave_tx_buffer[4]={ 0x55, 0xaa, 0x55, 0xaa};
 uint8_t slave_rx_buffer[4];
 #endif  // to prevent warning
 
-int main(void) {
 #ifdef SPI_TEST
 	uint16_t ack_bytes = SPI_ACK_BYTES;
 	uint8_t rcv_cmd[2];
@@ -45,10 +44,21 @@ int main(void) {
 	uint16_t master_cmd;
 #endif	// to prevent warning
 
+#ifdef UART_TEST
+	uint8_t message1[] = "STM32F4xx Discovery board \n UART Sample App test\n June , 2016 \n";
+	uint8_t message2[] = "Invalid Command !!! \n";
+	uint8_t message3[] = "Success !! \n";
+	uint8_t rx_buffer[4];
+	uart_handle_t uart_handle, debug_handle;
+#endif	// to prevent warning
+
+int main(void) {
+
 
 	spi_gpio_init();
 	led_init();  										// configure LED
 	i2c_gpio_init();
+	uart_gpio_init();
 	button_init();  /* Configure USER Button as ext interrupt throw EXTI0 */
 	uart_gpio_init();
 
@@ -136,6 +146,39 @@ int main(void) {
 
 
 	/******************************************************************************/
+
+	/**
+	 ******************************************************************************
+	 	 	 	 	 	 	 	 	 	UART CONFIG
+	 ******************************************************************************
+	 */
+
+	/*enable the clock for the USART2 Peripheral */
+	_HAL_RCC_USART2_CLK_ENABLE();
+
+	uart_handle.Instance          = USART_2;
+
+	uart_handle.Init.BaudRate     = USART_BAUD_9600;
+	uart_handle.Init.WordLength   = USART_WL_1S8B;
+	uart_handle.Init.StopBits     = UART_STOPBITS_1;
+	uart_handle.Init.Parity       = UART_PARITY_NONE;
+	uart_handle.Init.Mode         = UART_MODE_TX_RX;
+	uart_handle.Init.OverSampling = USART_OVER16_ENABLE;
+
+/*fill out the application callbacks */
+	uart_handle.tx_cmp_cb = app_tx_cmp_callback;
+	uart_handle.rx_cmp_cb = app_rx_cmp_callback;
+
+	hal_uart_init(&uart_handle);
+
+	/*enable the IRQ of USART2 peripheral */
+	NVIC_EnableIRQ(USARTx_IRQn);
+
+	while(uart_handle.tx_state != HAL_UART_STATE_READY );
+	/*Send the message */
+	hal_uart_tx(&uart_handle,message1, sizeof(message1)-1);
+
+
 
 	/* Wait for user Button press before starting the communication. Toggles LED_ORANGE until then */
 	/*while (TestReady != SET) {
@@ -509,6 +552,7 @@ void button_init(void) {
 	hal_gpio_enable_interrupt(GPIO_BUTTON_PIN, EXTI0_IRQn);
 }
 
+#if defined(I2C_TEST) || defined(SIP_TEST)
 static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2,
 		uint16_t BufferLength) {
 	while (BufferLength--) {
@@ -520,6 +564,12 @@ static uint16_t Buffercmp(uint8_t *pBuffer1, uint8_t *pBuffer2,
 	}
 	return 0;
 }
+#endif
+
+
+
+
+
 
 /*
  * @brief  brief  This function handles EXTI15-10 interrupt request.
