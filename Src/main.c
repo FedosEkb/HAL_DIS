@@ -45,7 +45,7 @@ uint8_t slave_rx_buffer[4];
 #endif	// to prevent warning
 
 #ifdef UART_TEST
-	uint8_t message1[] = "STM32F4xx Discovery board \n UART Sample App test\n June , 2016 \n";
+	uint8_t message1[] = "STM32F4xx Discovery board \n UART Sample App test\n May , 2021 \n";
 	uint8_t message2[] = "Invalid Command !!! \n";
 	uint8_t message3[] = "Success !! \n";
 	uint8_t rx_buffer[4];
@@ -58,7 +58,6 @@ int main(void) {
 	spi_gpio_init();
 	led_init();  										// configure LED
 	i2c_gpio_init();
-	uart_gpio_init();
 	button_init();  /* Configure USER Button as ext interrupt throw EXTI0 */
 	uart_gpio_init();
 
