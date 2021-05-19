@@ -7,6 +7,6 @@ gpio_driver.c:76:6:hal_gpio_set_alt_function	16	static
 gpio_driver.c:91:9:hal_gpio_read_from_pin	16	static
 gpio_driver.c:103:6:hal_gpio_write_to_pin	16	static
 gpio_driver.c:110:6:hal_gpio_init	16	static
-gpio_driver.c:122:6:hal_gpio_configure_interrupt	16	static
-gpio_driver.c:133:6:hal_gpio_enable_interrupt	16	static
-gpio_driver.c:139:6:hal_gpio_clear_interrupt	16	static
+gpio_driver.c:121:6:hal_gpio_configure_interrupt	16	static
+gpio_driver.c:130:6:hal_gpio_enable_interrupt	16	static
+gpio_driver.c:135:6:hal_gpio_clear_interrupt	16	static

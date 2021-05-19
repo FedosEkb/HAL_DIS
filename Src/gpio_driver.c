@@ -108,7 +108,6 @@ void hal_gpio_write_to_pin(GPIO_TypeDef *GPIOx, uint16_t pin_no, uint8_t value) 
 }
 
 void hal_gpio_init(GPIO_TypeDef *GPIOx, gpio_pin_conf_t *gpio_pin_conf) {
-
 	hal_gpio_configure_pin_mode(GPIOx, gpio_pin_conf->pin, gpio_pin_conf->mode); // set pin mode from input structure
 	hal_gpio_configure_pin_otype(GPIOx, gpio_pin_conf->pin,
 			gpio_pin_conf->op_type);
@@ -120,8 +119,6 @@ void hal_gpio_init(GPIO_TypeDef *GPIOx, gpio_pin_conf_t *gpio_pin_conf) {
 }
 
 void hal_gpio_configure_interrupt(uint16_t pin_no, int_edge_sel_t edge_sel) {
-
-
 	EXTI->FTSR &= ~(1 << pin_no);
 	EXTI->RTSR &= ~(1 << pin_no);
 	if ((edge_sel == INT_FALLING_EDGE) || (edge_sel == INT_FALLING_RISING_EDGE))
@@ -131,7 +128,6 @@ void hal_gpio_configure_interrupt(uint16_t pin_no, int_edge_sel_t edge_sel) {
 }
 
 void hal_gpio_enable_interrupt(uint16_t pin_no,IRQn_Type irq_no){
-
 	EXTI->IMR |= (1 << pin_no);
 	NVIC_EnableIRQ(irq_no);
 }
